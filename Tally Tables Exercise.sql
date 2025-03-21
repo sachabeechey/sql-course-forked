@@ -27,6 +27,24 @@ SELECT @EndDate = DATEFROMPARTS(2024, 1, 8);
 
 -- write your answer here
 
+DECLARE @StartDate DATE;
+DECLARE @EndDate DATE;
+DECLARE @NumDays INT;
+SELECT @StartDate = DATEFROMPARTS(2024, 1, 1);
+SELECT @EndDate = DATEFROMPARTS(2024, 1, 8);
+SELECT @NumDays = DATEDIFF(Day, @StartDate, @EndDate) +1;
+WITH ContigDateRange (n, AdmittedDate) As 
+(SELECT 
+    t.N
+    , DateADD(DAY, t.N - 1, @StartDate) 
+FROM
+    Tally t
+WHERE t.N <=@NumDays
+)
+Select 
+    cdr.AdmittedDate
+    ,Coalesce (pa.numadmissions, 0) As something 
+ from ContigDateRange cdr Left JOIN #PatientAdmission pa ON cdr.AdmittedDate = pa.AdmittedDate
 /*
  * Exercise: list the dates that have no patient admissions
 */
